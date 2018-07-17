@@ -3,7 +3,6 @@
 
 from flask import jsonify
 from .dbtools import DatabaseAgent
-import jieba
 import re
 
 MSG_MAP = {

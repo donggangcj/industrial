@@ -6,7 +6,6 @@
 @File    : app.py.py
 '''
 
-
 from flask_script import Manager, Server
 from route import create_app
 import os
