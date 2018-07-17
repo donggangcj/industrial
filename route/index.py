@@ -7,7 +7,6 @@
 '''
 
 
-import re
 from common.dbtools import DatabaseAgent, sqlalchemy_session
 from common.common import to_json
 from flask import request, Blueprint
