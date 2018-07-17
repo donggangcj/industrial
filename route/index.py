@@ -32,10 +32,14 @@ def get_news():
         del data["time"]
     with sqlalchemy_session() as session:
         if data:
+            count = session.query(Industrial).filter(Industrial.time >= time).filter_by(**data["indus"]).count()
             news = session.query(Industrial).filter(Industrial.time >= time).filter_by(**data["indus"]).order_by("time").limit(10).offset((data["page"])*10)
         else:
             news = session.query(Industrial).filter(Industrial.time >= time).order_by("time").limit(10).offset((data["page"])*10)
 
         for new in news:
             res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":new.area,"nature":new.nature})
+        print(count)
+        res.append({"page": int(count / 10) + 1})
         return to_json(200, res)
+        # return to_json(200, res)
