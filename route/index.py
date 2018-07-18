@@ -7,6 +7,7 @@
 '''
 
 
+import time
 from common.dbtools import DatabaseAgent, sqlalchemy_session
 from common.common import to_json
 from flask import request, Blueprint
@@ -27,19 +28,16 @@ def get_latest():
 def get_news():
     res = []
     data = request.json
-    time = data.get("time",0)
-    if time!=0:
-        del data["time"]
+    date = data.get("time",0)
+    if date == 0:
+        date = [0,time.time()]
     with sqlalchemy_session() as session:
         if data:
-            count = session.query(Industrial).filter(Industrial.time >= time).filter_by(**data["indus"]).count()
-            news = session.query(Industrial).filter(Industrial.time >= time).filter_by(**data["indus"]).order_by("time").limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter_by(**{"area":data["area"]}).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter_by(**{"area":data["area"]}).order_by("time").limit(10).offset((data["page"])*10)
         else:
-            news = session.query(Industrial).filter(Industrial.time >= time).order_by("time").limit(10).offset((data["page"])*10)
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).order_by("time").limit(10).offset((data["page"])*10)
 
         for new in news:
             res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":new.area,"nature":new.nature})
-        print(count)
-        res.append({"page": int(count / 10) + 1})
-        return to_json(200, res)
-        # return to_json(200, res)
+        return to_json(200, {"items":res,"page":int(count / 10) + 1})
