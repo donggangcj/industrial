@@ -21,6 +21,14 @@ MSG_MAP = {
     10001: '文件传输错误'
 }
 
+AREA_MAP = {
+    "shanghai":"上海",
+    "zhejiang":"浙江",
+    "jiangsu":"江苏",
+    "anhui":"安徽",
+    "chanyelianmeng":"工业互联网产业联盟"
+}
+
 # 过滤html标签
 def filter_tags(htmlstr):
     #先过滤CDATA

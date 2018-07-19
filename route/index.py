@@ -9,7 +9,7 @@
 
 import time
 from common.dbtools import DatabaseAgent, sqlalchemy_session
-from common.common import to_json
+from common.common import to_json, AREA_MAP
 from flask import request, Blueprint
 from job.models.industrial import Industrial
 
@@ -33,12 +33,12 @@ def get_news():
         date = [0,time.time()]
     with sqlalchemy_session() as session:
         if data.get("area",None):
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter_by(**{"area":data["area"]}).count()
-            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter_by(**{"area":data["area"]}).order_by("time").limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).order_by("time").limit(10).offset((data["page"])*10)
         else:
             count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).count()
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).order_by("time").limit(10).offset((data["page"])*10)
 
         for new in news:
-            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":new.area,"nature":new.nature})
+            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature})
         return to_json(200, {"items":res,"page":int(count / 10) + 1})
