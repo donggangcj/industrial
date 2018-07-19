@@ -21,7 +21,7 @@ def get_latest():
     with sqlalchemy_session() as session:
         latest_new = session.query(Industrial).order_by("time").limit(10).all()
         for new in latest_new:
-            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":new.area,"nature":new.nature})
+            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature})
         return to_json(200, res)
 
 @api.route("/news", methods=['post','get'])
