@@ -26,7 +26,9 @@ AREA_MAP = {
     "zhejiang":"浙江",
     "jiangsu":"江苏",
     "anhui":"安徽",
-    "chanyelianmeng":"工业互联网产业联盟"
+    "chanyelianmeng":"工业互联网产业联盟",
+    "gongxinbu":"工信部",
+    "souhu":"搜狐网"
 }
 
 # 过滤html标签
