@@ -15,14 +15,22 @@ from job.models.industrial import Industrial
 
 api = Blueprint('api', __name__)
 
-@api.route("/latest", methods=['get'])
+@api.route("/latest", methods=['post','get'])
 def get_latest():
     res = []
+    if request.method == "GET":
+        page = 0
+    else:
+        data = request.json
+        page = data["page"] if data.get("page",None) != None else 0
+    now_time = time.time()
+    last_time = now_time-604800
     with sqlalchemy_session() as session:
-        latest_new = session.query(Industrial).order_by("time").limit(10).all()
+        count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
+        latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).order_by("time").limit(10).offset((int(page)) * 10)
         for new in latest_new:
             res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature})
-        return to_json(200, res)
+        return to_json(200, {"items":res,"page":int(count / 10) + 1})
 
 @api.route("/news", methods=['post','get'])
 def get_news():
