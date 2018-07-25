@@ -29,7 +29,7 @@ def get_latest():
         count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
         latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((int(page)) * 10)
         for new in latest_new:
-            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"key":new.key})
+            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"key":new.keyword})
         return to_json(200, {"items":res,"page":int(count / 10) + 1})
 
 @api.route("/news", methods=['post','get'])
@@ -48,5 +48,10 @@ def get_news():
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
 
         for new in news:
-            res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"key":new.key})
+            if new.keyword in data.get("key",None) or data.get("key",None)==None:
+                res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"key":new.keyword})
+            else:
+                continue
         return to_json(200, {"items":res,"page":int(count / 10) + 1})
+
+
