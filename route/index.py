@@ -26,11 +26,11 @@ def get_latest():
     now_time = time.time()
     last_time = now_time-604800
     with sqlalchemy_session() as session:
-        count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
+        # count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
         latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((int(page)) * 10)
         for new in latest_new:
             res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"keyword":new.keyword})
-        return to_json(200, {"items":res,"page":int(count / 10) + 1})
+        return to_json(200, {"items":res,"page":int(len(res) / 10) + 1})
 
 @api.route("/news", methods=['post','get'])
 def get_news():
@@ -41,10 +41,10 @@ def get_news():
         date = [0,time.time()]
     with sqlalchemy_session() as session:
         if data.get("area",None):
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).count()
+            # count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).count()
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
         else:
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).count()
+            # count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).count()
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
 
         for new in news:
@@ -52,6 +52,6 @@ def get_news():
                 res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"keyword":new.keyword})
             else:
                 continue
-        return to_json(200, {"items":res,"page":int(count / 10) + 1})
+        return to_json(200, {"items":res,"page":int(len(res) / 10) + 1})
 
 
