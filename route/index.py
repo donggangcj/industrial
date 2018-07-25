@@ -48,7 +48,7 @@ def get_news():
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
 
         for new in news:
-            if new.keyword in data.get("key",None) or data.get("key",None)==None:
+            if new.keyword in data.get("key",[]) or data.get("key",None)==None:
                 res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"key":new.keyword})
             else:
                 continue
