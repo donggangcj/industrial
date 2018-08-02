@@ -32,7 +32,10 @@ AREA_MAP = {
     "xinhua":"新华网",
     "shandong":"山东",
     "beijing":"北京",
-    "guangdong":"广东"
+    "guangdong":"广东",
+    "zaoqizhineng":"造奇智能",
+    "huodongjia":"活动家",
+    "huodongxing":"活动行"
 }
 
 # 过滤html标签

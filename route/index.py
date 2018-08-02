@@ -28,7 +28,9 @@ def get_latest():
     with sqlalchemy_session() as session:
         count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
         latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((int(page)) * 10)
+        coun = 0
         for new in latest_new:
+            coun += 1
             res.append({"id":new.id,"title":new.title,"time":new.time,"url":new.url,"area":AREA_MAP.get(new.area,None),"nature":new.nature,"keyword":new.keyword})
         return to_json(200, {"items":res,"page":int(count / 10) + 1})
 
@@ -36,17 +38,16 @@ def get_latest():
 def get_news():
     res = []
     data = request.json
-    print(data.get("key",["工业互联网","工业App"]))
     date = data.get("time",0)
     if date == 0:
         date = [0,time.time()]
     with sqlalchemy_session() as session:
         if data.get("area",None):
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App"]))).count()
-            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
         else:
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App"]))).count()
-            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
 
         for new in news:
             if new.keyword in data.get("key",[]) or data.get("key",None)==None:
