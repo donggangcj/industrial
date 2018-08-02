@@ -9,7 +9,7 @@
 
 import time
 from common.dbtools import DatabaseAgent, sqlalchemy_session
-from common.common import to_json, AREA_MAP
+from common.common import to_json, AREA_MAP, KEYWORD
 from flask import request, Blueprint
 from job.models.industrial import Industrial
 
@@ -43,11 +43,11 @@ def get_news():
         date = [0,time.time()]
     with sqlalchemy_session() as session:
         if data.get("area",None):
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).count()
-            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
         else:
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).count()
-            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App","工业互联网活动"]))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).count()
+            news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
 
         for new in news:
             if new.keyword in data.get("key",[]) or data.get("key",None)==None:

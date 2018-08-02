@@ -21,6 +21,8 @@ MSG_MAP = {
     10001: '文件传输错误'
 }
 
+KEYWORD = ["工业互联网","工业App","工业互联网活动"]
+
 AREA_MAP = {
     "shanghai":"上海",
     "zhejiang":"浙江",
