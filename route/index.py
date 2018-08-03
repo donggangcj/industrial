@@ -27,7 +27,7 @@ def get_latest():
     last_time = now_time-604800
     with sqlalchemy_session() as session:
         count = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).count()
-        latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).order_by(Industrial.time.desc()).limit(10).offset((int(page)) * 10)
+        latest_new = session.query(Industrial).filter((Industrial.time >= last_time) & (now_time >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",["工业互联网","工业App"]))).order_by(Industrial.time.desc()).limit(10).offset((int(page)) * 10)
         coun = 0
         for new in latest_new:
             coun += 1
