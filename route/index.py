@@ -43,9 +43,7 @@ def get_news():
         date = [0,2175696000]
     with sqlalchemy_session() as session:
         if data.get("area",None):
-            # count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).count()
-            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(
-                Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key", KEYWORD))).count()
+            count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).count()
             news = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.area.in_(data.get("area"))).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).order_by(Industrial.time.desc()).limit(10).offset((data["page"])*10)
         else:
             count = session.query(Industrial).filter((Industrial.time >= date[0]) & (date[1] >= Industrial.time)).filter(Industrial.keyword.in_(data.get("key",KEYWORD))).count()
